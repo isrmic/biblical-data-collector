@@ -1,0 +1,21 @@
+{
+  "name": "biblical-data-collector",
+  "version": "1.0.0",
+  "description": "a simple collector biblical data of biblical sites",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "biblical",
+    "data",
+    "collector",
+    "API"
+  ],
+  "author": "isrmic",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.2"
+  }
+}
