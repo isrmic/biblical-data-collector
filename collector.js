@@ -5,6 +5,8 @@ const path = require('path');
 
 const { output, outputln } = require('./utils/output');
 
+const config = require('./config');
+
 // http://www.mundocristao.com.br/:booknumber/:bookname-:chapter/
 
 const URIs = {
@@ -16,6 +18,7 @@ const URIs = {
 const Bibles = {
 	versions: {
 		nvt: {
+			booksnumber: 66,
 			books: [],
 		},
 	},
@@ -24,7 +27,7 @@ const Bibles = {
 //declare 'global' to access from the other functions
 const infobooks = {};
 
-const startCollect = async () => {
+const startCollect = async (startold, startnew) => {
 
 	//select version
 	const nvt = Bibles.versions.nvt;
@@ -71,7 +74,7 @@ const startCollect = async () => {
 
 		// Collect of old testament
 		outputln('\r\nVelho Testamento');
-		for (let i = 0; i < _oldlistbooksname.length; i++) {
+		for (let i = config.oldtestament.startOfBook - 1; i < _oldlistbooksname.length; i++) {
 			
 			const bookname = _oldlistbooksname[i].children[0].data.trim();
 			output(`Coletando dados do livro: ${bookname} `, 'cyan');
@@ -86,7 +89,7 @@ const startCollect = async () => {
 
 		// Collect of new testament
 		outputln('\r\nNovo Testamento');
-		for (let i = 0; i < _newlistbooksname.length; i++) {
+		for (let i = config.newtestament.startOfBook - 1; i < _newlistbooksname.length; i++) {
 			
 			const bookname = _newlistbooksname[i].children[0].data.trim();
 			output(`Coletando dados do livro: ${bookname} `, 'cyan');
@@ -94,11 +97,17 @@ const startCollect = async () => {
 			const ulelement = $(_newbookschapters[i]).find('ul li');
 			output(`Capítulos: `, 'yellow');
 			outputln(`${ulelement.length} \r\n`);
-
-			newbooks.push(await createNewBook(bookname, ulelement.length, i + 1));
+			
+			// i = a index of list books new testmanet
+			// 39 is a number of books old testament
+			// on mundo cristão the books is numerated from 1 at 66
+			// the new testament start at 40
+			// example: 0 + 39 + 1 = 40 -> first book of new testament
+			// third param is a book number
+			newbooks.push(await createNewBook(bookname, ulelement.length, (i + 39 + 1) ));
 		}
 		
-		books = [...oldbooks, ...newbooks]; // generate a all books with the copy of oldbooks e newbooks using spread operator
+		books = [...oldbooks, ...newbooks]; // generate all books with the copy of oldbooks e newbooks using spread operator
 
 		const bookcontentstring = JSON.stringify(books); // transform data to to JSON string
 
@@ -112,21 +121,23 @@ const startCollect = async () => {
 
 /**
  * 
- * @param {String} bookname 
- * @param {Number} chaptersnumber 
- * @param {Number} booknumber 
+ * @param {String} bookname //name of book
+ * @param {Number} chaptersnumber // number of chapters book
+ * @param {Number} booknumber // number that represent the book
  */
 const createNewBook = async (bookname, chaptersnumber, booknumber) => {
 	
 	let totalversicles = 0;
 
+	const infobook = infobooks[bookname];
+
 	//init create of book
 	const book = { 
 		bookname,
-		abbrev: infobooks[bookname].abbrev,
-		author: infobooks[bookname].author,
-		testament: infobooks[bookname].testament,
-		group: infobooks[bookname].group,
+		abbrev: infobook ? infobook.abbrev : '? ? ?',
+		author: infobook ? infobook.author : '? ? ?',
+		testament: infobook ? infobook.testament : '? ? ?',
+		group: infobook ? infobook.group : '? ? ?',
 		chaptersnumber,
 		chapters: [],
 	};
@@ -136,7 +147,7 @@ const createNewBook = async (bookname, chaptersnumber, booknumber) => {
 		// output(`Coletando capítulo ${chapternumber}`, 'yellow');
 
 		const uri = URIs.baseurl + `${booknumber}/${bookname}-${chapternumber}`;
-		
+
 		const response = await axios.get(uri);
 
 		const { data } = response;
