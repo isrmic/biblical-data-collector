@@ -1,7 +1,8 @@
-const startCollect = require('./collector');
+const startCollect = require('./src/collector');
+const config = require('./config');
 
 try {
-	startCollect();
+	startCollect(config);
 }
 catch (err) {
 	console.warn(err);
