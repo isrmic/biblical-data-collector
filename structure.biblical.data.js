@@ -6,8 +6,10 @@ const structure = {
 				{
 					bookname: String,
 					abbrev: String,
+					author: String,
+					testament: String,
 					group: String,
-					chaptersnumber: Number,
+					chaptersnumber: Number,					
 					chapters: [
 						{
 							versiclesnumber: Number,

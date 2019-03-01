@@ -21,10 +21,22 @@ const Bibles = {
 	},
 };
 
+//declare 'global' to access from the other functions
+const infobooks = {};
+
 const startCollect = async () => {
 
 	//select version
 	const nvt = Bibles.versions.nvt;
+
+	//load data of books from other API
+	const response = await axios.get(URIs.apibible);
+	const databooks = response.data;
+	
+	//re-structured data of book for the best acces data (acces key)
+	databooks.map(dtb => {
+		infobooks[dtb.name] = dtb;
+	});	
 
 	//collect books and chapters number
 	{
@@ -67,6 +79,7 @@ const startCollect = async () => {
 			const ulelement = $(_oldbookschapters[i]).find('ul li');
 			output(`Capítulos: `, 'yellow');
 			outputln(`${ulelement.length} \r\n`);
+			
 			oldbooks.push(await createNewBook(bookname, ulelement.length, i + 1));
 			
 		}
@@ -107,7 +120,16 @@ const createNewBook = async (bookname, chaptersnumber, booknumber) => {
 	
 	let totalversicles = 0;
 
-	const book = { bookname, chaptersnumber, chapters: [], };
+	//init create of book
+	const book = { 
+		bookname,
+		abbrev: infobooks[bookname].abbrev,
+		author: infobooks[bookname].author,
+		testament: infobooks[bookname].testament,
+		group: infobooks[bookname].group,
+		chaptersnumber,
+		chapters: [],
+	};
 	
 	for (let chapternumber = 1; chapternumber <= chaptersnumber; chapternumber++) {
 		
@@ -149,7 +171,7 @@ const createNewBook = async (bookname, chaptersnumber, booknumber) => {
 			versicles,
 		};
 
-		book.chapters.push(chapter);		
+		book.chapters.push(chapter);
 
 	}
 	
