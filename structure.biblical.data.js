@@ -13,6 +13,7 @@ const structure = {
 					chapters: [
 						{
 							versiclesnumber: Number,
+							versicles: [],
 						},
 					],
 				},

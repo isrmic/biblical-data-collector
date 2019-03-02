@@ -46,19 +46,18 @@ const startCollect = async (_config) => {
 		
 		const response = await axios.get(URIs.apibible);
 		var databooks = response.data;
-		// console.log(response.text);
-		fs.writeFile(databooksfiledir, JSON.stringify(databooks), async err => {
+		
+		//re-structured data of book for the best acces data (acces key)
+		databooks.map(dtb => {
+			infobooks[dtb.name] = dtb;
+		});	
+
+		//save infobooks JSON string to preload file
+		fs.writeFile(databooksfiledir, JSON.stringify(infobooks), async err => {
 			if (err)
 				throw err;
 		});
-	}
-
-	//re-structured data of book for the best acces data (acces key)
-	databooks.map(dtb => {
-		infobooks[dtb.name] = dtb;
-	});
-
-	console.log(infobooks);
+	}	
 
 	//collect books and chapters number
 	{

@@ -14,6 +14,6 @@ module.exports = {
 	},
 	allbooks: {
 		filename: 'nvt.json',
-		directory: path.join(__dirname, 'books'),
+		directory: path.join(__dirname, 'result'),
 	},
 };
