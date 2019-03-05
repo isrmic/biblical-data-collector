@@ -19,5 +19,9 @@
   "dependencies": {
     "axios": "^0.18.0",
     "cheerio": "^1.0.0-rc.2"
+  },  
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/isrmic/biblical-data-collector"
   }
 }
